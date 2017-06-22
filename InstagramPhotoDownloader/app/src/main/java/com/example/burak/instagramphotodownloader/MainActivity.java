@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
                             try {
                                 GetMedia getMedia = new GetMedia();
                                 if(!tvShareUrl.getText().toString().matches(""))
-                             getMedia.execute(String.valueOf("https://www.instagram.com/p/BVaOL9NB1QL/"));
+                             getMedia.execute(String.valueOf(tvShareUrl.getText().toString()));
                         else
                             Toast.makeText(getApplicationContext(),"You Must  Be Fill The Area",Toast.LENGTH_LONG).show();
                     } catch (Exception err) {
