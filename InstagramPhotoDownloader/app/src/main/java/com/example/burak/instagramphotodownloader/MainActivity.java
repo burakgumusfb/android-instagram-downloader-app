@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
                             try {
                                 GetMedia getMedia = new GetMedia();
                                 if(!tvShareUrl.getText().toString().matches(""))
-                             getMedia.execute(String.valueOf(tvShareUrl.getText().toString()));
+                             getMedia.execute(String.valueOf("https://www.instagram.com/p/BVaOL9NB1QL/"));
                         else
                             Toast.makeText(getApplicationContext(),"You Must  Be Fill The Area",Toast.LENGTH_LONG).show();
                     } catch (Exception err) {
@@ -270,6 +270,7 @@ public class MainActivity extends AppCompatActivity {
                 return null;
             if (!medias[0].getIsVideo()) {
                 SaveImage(medias[0]);
+
             } else {
                 SaveVideo(medias[0]);
             }
@@ -305,13 +306,12 @@ public class MainActivity extends AppCompatActivity {
     private void SaveImage(ShortcodeMedia shortcodeMedia) {
         Bitmap image = HttpHelper.getBitmapFromURL(shortcodeMedia.getDisplayUrl());
         String fileName = CommonHelper.CreateFileNameForImage(shortcodeMedia.getDisplayUrl());
-        DirectoryProgress.SaveImage(image, fileName);
-
+        DirectoryProgress.SaveImage(image,fileName);
     }
 
     private void SaveVideo(ShortcodeMedia shortcodeMedia) {
         String fileName = CommonHelper.CreateFileNameForVideo(shortcodeMedia.getVideo_url());
-        VideoDownloader.Download(shortcodeMedia.getVideo_url(), fileName);
+        VideoDownloader.Download(shortcodeMedia.getVideo_url(), fileName,getContentResolver());
     }
 
     private void LoadAd() {

@@ -1,8 +1,12 @@
 package core;
 
+import android.content.ContentResolver;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
+import android.provider.MediaStore;
+
+import com.example.burak.instagramphotodownloader.MainActivity;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -42,7 +46,7 @@ public class DirectoryProgress {
 
     public static void SaveImage(Bitmap bmp, String name) {
 
-        File fs = new File(Environment.getExternalStorageDirectory() + "/" + constants.PhotoDirName + "/" + name);
+        File fs = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath()+ "/" + name);
         try {
             FileOutputStream out = new FileOutputStream(fs);
             bmp.compress(Bitmap.CompressFormat.JPEG, 90, out);
@@ -54,14 +58,9 @@ public class DirectoryProgress {
             e.printStackTrace();
         }
     }
-
-    public static Bitmap GetOneFile(File getcacheDir) {
-        Bitmap bmp = null;
-        File path = new File(getcacheDir, constants.PhotoDirName);
-        if (path.exists()) {
-            String[] fileNames = path.list();
-            bmp = BitmapFactory.decodeFile(path + "/" + fileNames[0]);
-        }
-        return bmp;
+    public static void SaveBitmap(ContentResolver context, Bitmap bitmap)
+    {
+        MediaStore.Images.Media.insertImage(context, bitmap, "" , "");
     }
+
 }

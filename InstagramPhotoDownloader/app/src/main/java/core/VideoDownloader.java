@@ -1,14 +1,17 @@
 package core;
 
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
+import android.provider.MediaStore;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
@@ -21,8 +24,8 @@ import constants.constants;
  */
 
 public class VideoDownloader {
-    public static void Download(String fileUrl,String fileName) {
-        File rootFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + constants.VideoDirName);
+    public static void Download(String fileUrl, String fileName, ContentResolver resolver) {
+        File rootFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES).getPath());
         URL url = null;
         try {
             //"http://techslides.com/demos/sample-videos/small.mp4"
@@ -60,7 +63,9 @@ public class VideoDownloader {
         byte[] buffer = new byte[fileSize];
         int len1 = 0;
         FileOutputStream f = null;
+
         try {
+
             f = new FileOutputStream(new File(rootFile,fileName));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
