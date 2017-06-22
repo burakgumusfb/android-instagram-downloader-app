@@ -24,11 +24,10 @@ import constants.constants;
  */
 
 public class VideoDownloader {
-    public static void Download(String fileUrl, String fileName, ContentResolver resolver) {
-        File rootFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES).getPath());
+    public static void Download(String fileUrl, String fileName) {
+        File rootFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + constants.VideoDirName);
         URL url = null;
         try {
-            //"http://techslides.com/demos/sample-videos/small.mp4"
             url = new URL(fileUrl);
         } catch (MalformedURLException e) {
             e.printStackTrace();

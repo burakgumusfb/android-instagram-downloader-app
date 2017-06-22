@@ -26,20 +26,7 @@ import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
-import org.jsoup.Connection;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
-import java.io.IOException;
-import java.util.ArrayList;
-
-import core.DirectoryProgress;
-import core.EntryData;
-import core.Graphql;
-import core.PostPage;
-import core.SharedResponseTemplate;
+import core.PhotoDownloader;
 import core.ShortcodeMedia;
 import core.VideoDownloader;
 import helper.CommonHelper;
@@ -66,7 +53,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         CommonHelper.ThreadPolicy();
-
         isStoragePermissionGranted();
 
 
@@ -90,13 +76,15 @@ public class MainActivity extends AppCompatActivity {
 
                 CommonHelper.CreateVideoDirectory();
                 CommonHelper.CreatePhotoDirectory();
-                        if (CommonHelper.checkNetworkStatus(getApplicationContext())) {
-                            try {
-                                GetMedia getMedia = new GetMedia();
-                                if(!tvShareUrl.getText().toString().matches(""))
-                             getMedia.execute(String.valueOf(tvShareUrl.getText().toString()));
-                        else
-                            Toast.makeText(getApplicationContext(),"You Must  Be Fill The Area",Toast.LENGTH_LONG).show();
+
+                if (CommonHelper.checkNetworkStatus(getApplicationContext())) {
+                    try {
+                        GetMedia getMedia = new GetMedia();
+                        if (!tvShareUrl.getText().toString().matches("")) {
+                            getMedia.execute(String.valueOf(tvShareUrl.getText().toString()));
+                        } else {
+                            Toast.makeText(getApplicationContext(), "You Must  Be Fill The Area", Toast.LENGTH_LONG).show();
+                        }
                     } catch (Exception err) {
                         Toast.makeText(getApplicationContext(), "Error... Please Check Share Url.", Toast.LENGTH_LONG);
                     }
@@ -135,9 +123,8 @@ public class MainActivity extends AppCompatActivity {
         tvShareUrl.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean b) {
-                if (!b)
-                {
-                    InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
+                if (!b) {
+                    InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
                     inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
                 }
             }
@@ -170,27 +157,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private String Replace(String element) {
-
-        element = element.toString().replace("<script type=\"text/javascript\">", "");
-        element = element.toString().replace(";</script>", "");
-        element = element.toString().replace("window._sharedData = ", "");
-        return element;
-    }
-
-    private ShortcodeMedia GetMediaInfo(String json) {
-        SharedResponseTemplate template = CommonHelper.ConvertToJson(json);
-        EntryData entryData = template.getEntryData();
-
-
-        ArrayList<PostPage> postPage = entryData.getPostPage();
-        for (PostPage page : postPage) {
-            Graphql graphql = page.getGraphql();
-            ShortcodeMedia shortcodeMedia = graphql.getShortcodeMedia();
-            return shortcodeMedia;
-        }
-        return null;
-    }
 
     public class GetMedia extends AsyncTask<String, String, ShortcodeMedia> {
         ProgressDialog progressDialog;
@@ -198,37 +164,8 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected ShortcodeMedia doInBackground(String... shareUrl) {
 
-            Connection.Response response = null;
-
-            try {
-                response = Jsoup.connect(String.valueOf(shareUrl[0])).timeout(30000).execute();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            Document doc = null;
-            try {
-                if (response != null)
-                    doc = response.parse();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            try {
-                if (doc == null)
-                    return null;
-                Elements elements = doc.getElementsByTag("script");
-                for (Element element : elements) {
-                    if (element.toString().contains("window._sharedData")) {
-
-                        JSON = Replace(element.toString());
-                        return GetMediaInfo(JSON);
-
-                    }
-                }
-            } catch (Exception err) {
-                err.printStackTrace();
-            }
-
-            return null;
+            PhotoDownloader downloader = new PhotoDownloader();
+            return downloader.ConnectImage(shareUrl[0]);
         }
 
         @Override
@@ -306,12 +243,12 @@ public class MainActivity extends AppCompatActivity {
     private void SaveImage(ShortcodeMedia shortcodeMedia) {
         Bitmap image = HttpHelper.getBitmapFromURL(shortcodeMedia.getDisplayUrl());
         String fileName = CommonHelper.CreateFileNameForImage(shortcodeMedia.getDisplayUrl());
-        DirectoryProgress.SaveImage(image,fileName);
+        PhotoDownloader.SaveImage(image, fileName);
     }
 
     private void SaveVideo(ShortcodeMedia shortcodeMedia) {
         String fileName = CommonHelper.CreateFileNameForVideo(shortcodeMedia.getVideo_url());
-        VideoDownloader.Download(shortcodeMedia.getVideo_url(), fileName,getContentResolver());
+        VideoDownloader.Download(shortcodeMedia.getVideo_url(), fileName);
     }
 
     private void LoadAd() {
@@ -324,9 +261,5 @@ public class MainActivity extends AppCompatActivity {
         // AdRequest adRequest = new AdRequest.Builder().addTestDevice(AdRequest.DEVICE_ID_EMULATOR).build();
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
-    }
-
-    private void GetClipboard() {
-
     }
 }
