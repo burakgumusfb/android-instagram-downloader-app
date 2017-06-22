@@ -315,6 +315,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void LoadAd() {
+        llAdd.removeAllViews();
         adView = new AdView(this);
         adView.setAdSize(AdSize.BANNER);
         adView.setAdUnitId(getString(R.string.add_id));
