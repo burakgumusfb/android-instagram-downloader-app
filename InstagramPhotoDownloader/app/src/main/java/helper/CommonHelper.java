@@ -5,8 +5,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Environment;
 import android.os.StrictMode;
-import android.telephony.TelephonyManager;
-import android.util.Log;
 
 import com.google.gson.Gson;
 
@@ -39,6 +37,7 @@ public class CommonHelper {
         }
         return success;
     }
+
     public static boolean CreatePhotoDirectory() {
         File rootFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + constants.PhotoDirName);
         boolean success = false;
@@ -47,6 +46,7 @@ public class CommonHelper {
         }
         return success;
     }
+
     public static String CreateFileNameForVideo(String fileName) {
         if (fileName == null || fileName == "")
             return null;
@@ -55,9 +55,10 @@ public class CommonHelper {
         fileName = splitFileName[3] + splitFileName[4];
         return fileName;
     }
+
     public static String CreateFileNameForImage(String fileName) {
-            if (fileName == null || fileName == "")
-                return  null;
+        if (fileName == null || fileName == "")
+            return null;
 
         String[] splitFileName = fileName.split("/");
         fileName = splitFileName[3] + splitFileName[4] + splitFileName[5];
@@ -67,7 +68,7 @@ public class CommonHelper {
 
     public static boolean checkNetworkStatus(Context context) {
         ConnectivityManager cm =
-                (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         boolean isConnected = activeNetwork != null &&
@@ -76,4 +77,11 @@ public class CommonHelper {
     }
 
 
+    public static String RemoveScriptTag(String element) {
+
+        element = element.toString().replace("<script type=\"text/javascript\">", "");
+        element = element.toString().replace(";</script>", "");
+        element = element.toString().replace("window._sharedData = ", "");
+        return element;
+    }
 }
