@@ -10,12 +10,15 @@
     tools:context="com.example.burak.instagramphotodownloader.MainActivity">
 
     <LinearLayout
+        android:id="@+id/llBackground"
+        android:background="@drawable/background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
         android:orientation="vertical">
-
         <EditText
+            android:textColorHint="#fff"
+            android:textColor="#fff"
             android:id="@+id/twShareUrlUrl"
             android:layout_width="250dp"
             android:layout_height="50dp"
@@ -23,10 +26,19 @@
             android:hint="@string/twShareUrl" />
 
         <Button
+            android:background="@drawable/btnpreview"
+            android:textColor="#9b3598"
             android:id="@+id/btnDownload"
             android:layout_width="250dp"
             android:layout_height="50dp"
             android:text="@string/btnDownload" />
+        <LinearLayout
+            android:id="@+id/bottomAdd"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </LinearLayout>
     </LinearLayout>
 
     <RelativeLayout

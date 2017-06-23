@@ -46,7 +46,8 @@ public class MainActivity extends AppCompatActivity {
     private AdView adView;
     private LinearLayout llAdd;
     private Button btnSave;
-
+    private LinearLayout lLbackground;
+    private LinearLayout lLbottomAdd;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,6 +70,8 @@ public class MainActivity extends AppCompatActivity {
         twUserName = (TextView) findViewById(R.id.twUserName);
         llAdd = (LinearLayout) findViewById(R.id.llAdd);
         btnSave = (Button) findViewById(R.id.btnSaveMedia);
+        lLbackground = (LinearLayout)findViewById(R.id.llBackground);
+        lLbottomAdd = (LinearLayout)findViewById(R.id.bottomAdd);
 
         btnDownloader.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -120,13 +123,11 @@ public class MainActivity extends AppCompatActivity {
                 tvShareUrl.setText(clipboardManager.getPrimaryClip().getItemAt(0).getText());
             }
         });
-        tvShareUrl.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        lLbackground.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onFocusChange(View view, boolean b) {
-                if (!b) {
-                    InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
-                    inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                }
+            public void onClick(View v) {
+                InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+                inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
             }
         });
     }
@@ -253,10 +254,14 @@ public class MainActivity extends AppCompatActivity {
 
     private void LoadAd() {
         llAdd.removeAllViews();
+        //lLbottomAdd.removeAllViews();
+
         adView = new AdView(this);
         adView.setAdSize(AdSize.BANNER);
         adView.setAdUnitId(getString(R.string.add_id));
+
         llAdd.addView(adView);
+        //lLbottomAdd.addView(adView);
 
         // AdRequest adRequest = new AdRequest.Builder().addTestDevice(AdRequest.DEVICE_ID_EMULATOR).build();
         AdRequest adRequest = new AdRequest.Builder().build();
