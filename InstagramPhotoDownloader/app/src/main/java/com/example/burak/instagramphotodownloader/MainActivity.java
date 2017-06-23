@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     private Button btnSave;
     private LinearLayout lLbackground;
     private LinearLayout lLbottomAdd;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,8 +71,8 @@ public class MainActivity extends AppCompatActivity {
         twUserName = (TextView) findViewById(R.id.twUserName);
         llAdd = (LinearLayout) findViewById(R.id.llAdd);
         btnSave = (Button) findViewById(R.id.btnSaveMedia);
-        lLbackground = (LinearLayout)findViewById(R.id.llBackground);
-        lLbottomAdd = (LinearLayout)findViewById(R.id.bottomAdd);
+        lLbackground = (LinearLayout) findViewById(R.id.llBackground);
+        lLbottomAdd = (LinearLayout) findViewById(R.id.bottomAdd);
 
         btnDownloader.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -79,12 +80,17 @@ public class MainActivity extends AppCompatActivity {
 
                 CommonHelper.CreateVideoDirectory();
                 CommonHelper.CreatePhotoDirectory();
+                HideKeyboard();
 
                 if (CommonHelper.checkNetworkStatus(getApplicationContext())) {
                     try {
                         GetMedia getMedia = new GetMedia();
                         if (!tvShareUrl.getText().toString().matches("")) {
-                            getMedia.execute(String.valueOf(tvShareUrl.getText().toString()));
+                            if (CommonHelper.IsUrl(tvShareUrl.getText().toString())) {
+                                getMedia.execute(String.valueOf(tvShareUrl.getText().toString()));
+                            } else {
+                                Toast.makeText(getApplicationContext(), "Please Write Instagram Url", Toast.LENGTH_LONG).show();
+                            }
                         } else {
                             Toast.makeText(getApplicationContext(), "You Must  Be Fill The Area", Toast.LENGTH_LONG).show();
                         }
@@ -126,12 +132,17 @@ public class MainActivity extends AppCompatActivity {
         lLbackground.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
-                inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                HideKeyboard();
             }
         });
     }
 
+    private void HideKeyboard() {
+
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+
+    }
 
     public boolean isStoragePermissionGranted() {
         if (Build.VERSION.SDK_INT >= 23) {

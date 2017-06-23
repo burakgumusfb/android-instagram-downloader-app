@@ -1,10 +1,13 @@
 package helper;
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Environment;
 import android.os.StrictMode;
+import android.util.Patterns;
+import android.view.inputmethod.InputMethodManager;
 
 import com.google.gson.Gson;
 
@@ -83,5 +86,9 @@ public class CommonHelper {
         element = element.toString().replace(";</script>", "");
         element = element.toString().replace("window._sharedData = ", "");
         return element;
+    }
+
+    public static boolean IsUrl(String url) {
+        return Patterns.WEB_URL.matcher(url).matches();
     }
 }
