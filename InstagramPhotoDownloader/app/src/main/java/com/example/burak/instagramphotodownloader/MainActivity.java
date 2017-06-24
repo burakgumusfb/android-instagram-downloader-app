@@ -14,7 +14,11 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -29,7 +33,11 @@ import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import constants.constants;
+import core.DirectoryProgress;
 import core.PhotoDownloader;
 import core.ShortcodeMedia;
 import core.VideoDownloader;
@@ -52,8 +60,9 @@ public class MainActivity extends AppCompatActivity {
     private Button btnSave;
     private LinearLayout lLbackground;
     private LinearLayout lLbottomAdd;
-
-
+    private RecyclerView horizontal_recycler_view;
+    private ArrayList<String> horizontalList;
+    private HorizontalAdapter horizontalAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,6 +71,26 @@ public class MainActivity extends AppCompatActivity {
         CommonHelper.ThreadPolicy();
         isStoragePermissionGranted();
 
+        DirectoryProgress.GetPictures();
+
+        horizontal_recycler_view= (RecyclerView) findViewById(R.id.horizontal_recycler_view_photo);
+        horizontalList=new ArrayList<>();
+        horizontalList.add("horizontal 1");
+        horizontalList.add("horizontal 2");
+        horizontalList.add("horizontal 3");
+        horizontalList.add("horizontal 4");
+        horizontalList.add("horizontal 5");
+        horizontalList.add("horizontal 6");
+        horizontalList.add("horizontal 7");
+        horizontalList.add("horizontal 8");
+        horizontalList.add("horizontal 9");
+        horizontalList.add("horizontal 10");
+        horizontalAdapter=new HorizontalAdapter(horizontalList);
+
+        LinearLayoutManager horizontalLayoutManagaer
+                = new LinearLayoutManager(MainActivity.this, LinearLayoutManager.HORIZONTAL, false);
+        horizontal_recycler_view.setLayoutManager(horizontalLayoutManagaer);
+        horizontal_recycler_view.setAdapter(horizontalAdapter);
 
         tvShareUrl = (EditText) findViewById(R.id.twShareUrlUrl);
         btnDownloader = (Button) findViewById(R.id.btnDownload);
@@ -301,5 +330,50 @@ public class MainActivity extends AppCompatActivity {
         // AdRequest adRequest = new AdRequest.Builder().addTestDevice(AdRequest.DEVICE_ID_EMULATOR).build();
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
+    }
+
+    public class HorizontalAdapter extends RecyclerView.Adapter<HorizontalAdapter.MyViewHolder> {
+
+        private List<String> horizontalList;
+
+        public class MyViewHolder extends RecyclerView.ViewHolder {
+            public TextView txtView;
+
+            public MyViewHolder(View view) {
+                super(view);
+                txtView = (TextView) view.findViewById(R.id.txtView);
+
+            }
+        }
+
+
+        public HorizontalAdapter(List<String> horizontalList) {
+            this.horizontalList = horizontalList;
+        }
+
+        @Override
+        public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View itemView = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.horizontal_item_view, parent, false);
+
+            return new MyViewHolder(itemView);
+        }
+
+        @Override
+        public void onBindViewHolder(final MyViewHolder holder, final int position) {
+            holder.txtView.setText(horizontalList.get(position));
+
+            holder.txtView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(MainActivity.this,holder.txtView.getText().toString(),Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+        @Override
+        public int getItemCount() {
+            return horizontalList.size();
+        }
     }
 }
