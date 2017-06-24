@@ -4,11 +4,14 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ClipboardManager;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -26,6 +29,7 @@ import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
+import constants.constants;
 import core.PhotoDownloader;
 import core.ShortcodeMedia;
 import core.VideoDownloader;
@@ -49,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout lLbackground;
     private LinearLayout lLbottomAdd;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
         btnCloseSlideUpPanel = (Button) findViewById(R.id.btnCloseSlideUp);
 
         slidePanel.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
-        //  slidePanel.setTouchEnabled(false);
+        //slidePanel.setTouchEnabled(false);
         ivUserPhoto = (ImageView) findViewById(R.id.ivUserPhoto);
         twUserName = (TextView) findViewById(R.id.twUserName);
         llAdd = (LinearLayout) findViewById(R.id.llAdd);
@@ -135,6 +140,7 @@ public class MainActivity extends AppCompatActivity {
                 HideKeyboard();
             }
         });
+
     }
 
     private void HideKeyboard() {
@@ -203,7 +209,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public class DownloadMedia extends AsyncTask<ShortcodeMedia, Void, Void> {
+
+    public class DownloadMedia extends AsyncTask<ShortcodeMedia, Void, ShortcodeMedia> {
         ProgressDialog progressDialog;
 
         @Override
@@ -213,23 +220,38 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected Void doInBackground(ShortcodeMedia... shortcodeMedias) {
-            ShortcodeMedia[] medias = (ShortcodeMedia[]) shortcodeMedias;
-            if (medias.length < 1)
+        protected ShortcodeMedia doInBackground(ShortcodeMedia... shortcodeMedias) {
+            ShortcodeMedia media = shortcodeMedias[0];
+            if (media == null)
                 return null;
-            if (!medias[0].getIsVideo()) {
-                SaveImage(medias[0]);
+            if (!media.getIsVideo()) {
+                return SaveImage(media);
 
             } else {
-                SaveVideo(medias[0]);
+                return SaveVideo(media);
             }
-            return null;
         }
 
 
         @Override
-        protected void onPostExecute(Void aVoid) {
+        protected void onPostExecute(ShortcodeMedia media) {
             progressDialog.hide();
+
+            if (!media.getIsVideo()) {
+                String fileName = CommonHelper.CreateFileNameForImage(media.getDisplayUrl());
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent = intent.setDataAndType(Uri.parse("file://"+Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + constants.PhotoDirName + "/" + fileName), "image/*");
+                startActivity(intent);
+
+
+            }
+            else  {
+                String fileName = CommonHelper.CreateFileNameForVideo(media.getVideo_url());
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent = intent.setDataAndType(Uri.parse(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + constants.VideoDirName + "/" + fileName), "video/*");
+                startActivity(intent);
+            }
+
         }
     }
 
@@ -252,15 +274,17 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void SaveImage(ShortcodeMedia shortcodeMedia) {
+    private ShortcodeMedia SaveImage(ShortcodeMedia shortcodeMedia) {
         Bitmap image = HttpHelper.getBitmapFromURL(shortcodeMedia.getDisplayUrl());
         String fileName = CommonHelper.CreateFileNameForImage(shortcodeMedia.getDisplayUrl());
         PhotoDownloader.SaveImage(image, fileName);
+        return shortcodeMedia;
     }
 
-    private void SaveVideo(ShortcodeMedia shortcodeMedia) {
+    private ShortcodeMedia SaveVideo(ShortcodeMedia shortcodeMedia) {
         String fileName = CommonHelper.CreateFileNameForVideo(shortcodeMedia.getVideo_url());
         VideoDownloader.Download(shortcodeMedia.getVideo_url(), fileName);
+        return shortcodeMedia;
     }
 
     private void LoadAd() {
