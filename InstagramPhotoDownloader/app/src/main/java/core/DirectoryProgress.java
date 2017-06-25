@@ -1,9 +1,11 @@
 package core;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Environment;
-import android.util.Log;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import constants.constants;
 
@@ -13,12 +15,40 @@ import constants.constants;
 
 public class DirectoryProgress {
 
-    public static void GetPictures() {
-        String path = Environment.getExternalStorageDirectory().toString() + "/" + constants.PhotoDirName;
-       File directory = new File(path);
+    public ArrayList<Pictures> PicturesList;
+
+    public DirectoryProgress() {
+        PicturesList = new ArrayList<Pictures>();
+    }
+
+    public ArrayList<Pictures> GetPictures() {
+        String path = Environment.getExternalStorageDirectory().toString() + "/" + constants.InstagramMedia + "/" + constants.PhotoDirNameThumb;
+        File directory = new File(path);
         File[] files = directory.listFiles();
-        for (int i = 0; i < files.length; i++) {
-            Log.d("Files", "FileName:" + files[i].getName());
+        Pictures pictures;
+        if (files != null) {
+            for (int i = 0; i < files.length; i++) {
+                pictures = new Pictures();
+                Bitmap bitmap = BitmapFactory.decodeFile(String.valueOf(files[i]));
+                pictures.setBitMap(bitmap);
+                pictures.setFileName(files[i].getName());
+                PicturesList.add(pictures);
+            }
         }
+        return PicturesList;
+    }
+    public ArrayList<Pictures> GetVideoPictures() {
+        String path = Environment.getExternalStorageDirectory().toString() + "/" + constants.InstagramMedia + "/" + constants.PhotoDirName;
+        File directory = new File(path);
+        File[] files = directory.listFiles();
+        Pictures pictures;
+        for (int i = 0; i < files.length; i++) {
+            pictures = new Pictures();
+            Bitmap bitmap = BitmapFactory.decodeFile(String.valueOf(files[i]));
+            pictures.setBitMap(bitmap);
+            pictures.setFileName(files[i].getName());
+            PicturesList.add(pictures);
+        }
+        return PicturesList;
     }
 }

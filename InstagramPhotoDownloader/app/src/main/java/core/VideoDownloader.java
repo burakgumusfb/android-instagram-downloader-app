@@ -1,17 +1,12 @@
 package core;
 
-import android.content.ContentResolver;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Environment;
-import android.provider.MediaStore;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
@@ -25,7 +20,7 @@ import constants.constants;
 
 public class VideoDownloader {
     public static void Download(String fileUrl, String fileName) {
-        File rootFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + constants.VideoDirName);
+        File rootFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + constants.InstagramMedia + "/" + constants.VideoDirName);
         URL url = null;
         try {
             url = new URL(fileUrl);
@@ -65,7 +60,7 @@ public class VideoDownloader {
 
         try {
 
-            f = new FileOutputStream(new File(rootFile,fileName));
+            f = new FileOutputStream(new File(rootFile, fileName));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -91,8 +86,8 @@ public class VideoDownloader {
         }
 
         connection.disconnect();
-       // Intent intent = new Intent(Intent.ACTION_VIEW);
-       // intent.setDataAndType(Uri.parse(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Download/" + "small1.mp4"), "video/*");
+        // Intent intent = new Intent(Intent.ACTION_VIEW);
+        // intent.setDataAndType(Uri.parse(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Download/" + "small1.mp4"), "video/*");
         //startActivity(intent);
     }
 }

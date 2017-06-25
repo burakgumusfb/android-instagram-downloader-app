@@ -39,6 +39,7 @@ import java.util.List;
 import constants.constants;
 import core.DirectoryProgress;
 import core.PhotoDownloader;
+import core.Pictures;
 import core.ShortcodeMedia;
 import core.VideoDownloader;
 import helper.CommonHelper;
@@ -63,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView horizontal_recycler_view;
     private ArrayList<String> horizontalList;
     private HorizontalAdapter horizontalAdapter;
+    private ArrayList<Pictures> picturesArrayList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,22 +73,13 @@ public class MainActivity extends AppCompatActivity {
 
         CommonHelper.ThreadPolicy();
         isStoragePermissionGranted();
+        DirectoryProgress p = new DirectoryProgress();
 
-        DirectoryProgress.GetPictures();
 
-        horizontal_recycler_view= (RecyclerView) findViewById(R.id.horizontal_recycler_view_photo);
-        horizontalList=new ArrayList<>();
-        horizontalList.add("horizontal 1");
-        horizontalList.add("horizontal 2");
-        horizontalList.add("horizontal 3");
-        horizontalList.add("horizontal 4");
-        horizontalList.add("horizontal 5");
-        horizontalList.add("horizontal 6");
-        horizontalList.add("horizontal 7");
-        horizontalList.add("horizontal 8");
-        horizontalList.add("horizontal 9");
-        horizontalList.add("horizontal 10");
-        horizontalAdapter=new HorizontalAdapter(horizontalList);
+        horizontal_recycler_view = (RecyclerView) findViewById(R.id.horizontal_recycler_view_photo);
+        picturesArrayList = p.GetPictures();
+        if (picturesArrayList.size() > 0)
+            horizontalAdapter = new HorizontalAdapter(picturesArrayList);
 
         LinearLayoutManager horizontalLayoutManagaer
                 = new LinearLayoutManager(MainActivity.this, LinearLayoutManager.HORIZONTAL, false);
@@ -112,8 +106,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                CommonHelper.CreateVideoDirectory();
-                CommonHelper.CreatePhotoDirectory();
+                CommonHelper.CallAllDirectory();
                 HideKeyboard();
 
                 if (CommonHelper.checkNetworkStatus(getApplicationContext())) {
@@ -198,8 +191,7 @@ public class MainActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            CommonHelper.CreateVideoDirectory();
-            CommonHelper.CreatePhotoDirectory();
+            CommonHelper.CallAllDirectory();
 
         }
     }
@@ -268,17 +260,12 @@ public class MainActivity extends AppCompatActivity {
 
             if (!media.getIsVideo()) {
                 String fileName = CommonHelper.CreateFileNameForImage(media.getDisplayUrl());
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent = intent.setDataAndType(Uri.parse("file://"+Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + constants.PhotoDirName + "/" + fileName), "image/*");
-                startActivity(intent);
+                StartPhotoActivity(fileName);
 
 
-            }
-            else  {
+            } else {
                 String fileName = CommonHelper.CreateFileNameForVideo(media.getVideo_url());
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent = intent.setDataAndType(Uri.parse(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + constants.VideoDirName + "/" + fileName), "video/*");
-                startActivity(intent);
+                StartVideoActivity(fileName);
             }
 
         }
@@ -307,6 +294,7 @@ public class MainActivity extends AppCompatActivity {
         Bitmap image = HttpHelper.getBitmapFromURL(shortcodeMedia.getDisplayUrl());
         String fileName = CommonHelper.CreateFileNameForImage(shortcodeMedia.getDisplayUrl());
         PhotoDownloader.SaveImage(image, fileName);
+        PhotoDownloader.CreateThumb(image, fileName);
         return shortcodeMedia;
     }
 
@@ -334,20 +322,19 @@ public class MainActivity extends AppCompatActivity {
 
     public class HorizontalAdapter extends RecyclerView.Adapter<HorizontalAdapter.MyViewHolder> {
 
-        private List<String> horizontalList;
+        private List<Pictures> horizontalList;
 
         public class MyViewHolder extends RecyclerView.ViewHolder {
-            public TextView txtView;
+            public ImageView ivPhoto;
 
             public MyViewHolder(View view) {
                 super(view);
-                txtView = (TextView) view.findViewById(R.id.txtView);
-
+                ivPhoto = (ImageView) view.findViewById(R.id.ivPhoto);
             }
         }
 
 
-        public HorizontalAdapter(List<String> horizontalList) {
+        public HorizontalAdapter(List<Pictures> horizontalList) {
             this.horizontalList = horizontalList;
         }
 
@@ -361,12 +348,12 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(final MyViewHolder holder, final int position) {
-            holder.txtView.setText(horizontalList.get(position));
-
-            holder.txtView.setOnClickListener(new View.OnClickListener() {
+            holder.ivPhoto.setImageBitmap(horizontalList.get(position).getBitMap());
+            holder.ivPhoto.setTag(horizontalList.get(position).getFileName());
+            holder.ivPhoto.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(MainActivity.this,holder.txtView.getText().toString(),Toast.LENGTH_SHORT).show();
+                    StartPhotoActivity(holder.ivPhoto.getTag().toString());
                 }
             });
         }
@@ -375,5 +362,17 @@ public class MainActivity extends AppCompatActivity {
         public int getItemCount() {
             return horizontalList.size();
         }
+    }
+
+    private void StartPhotoActivity(String fileName) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent = intent.setDataAndType(Uri.parse("file://" + Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + constants.InstagramMedia + "/" + constants.PhotoDirName + "/" + fileName), "image/*");
+        startActivity(intent);
+    }
+    private void StartVideoActivity(String fileName)
+    {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent = intent.setDataAndType(Uri.parse(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + constants.InstagramMedia + "/" + constants.VideoDirName + "/" + fileName), "video/*");
+        startActivity(intent);
     }
 }

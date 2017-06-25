@@ -6,7 +6,10 @@ package constants;
 
 public class constants {
 
-    public static  final String DownloadFolderName = "InstagramMedia";
+    public static  final String InstagramMedia = "InstagramMedia";
     public static final String PhotoDirName = "InstagramSavedPhoto";
+    public static final String PhotoDirNameThumb="InstagramSavedPhotoThumb";
     public static final String VideoDirName = "InstagramSavedVideo";
+    public static final String VideoDirNameThumb = "InstagramSavedVideoThumb";
+
 }

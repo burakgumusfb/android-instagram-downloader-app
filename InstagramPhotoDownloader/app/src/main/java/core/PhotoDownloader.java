@@ -2,6 +2,7 @@ package core;
 
 import android.content.ContentResolver;
 import android.graphics.Bitmap;
+import android.media.ThumbnailUtils;
 import android.os.Environment;
 import android.provider.MediaStore;
 
@@ -28,7 +29,7 @@ public class PhotoDownloader {
 
     public static void SaveImage(Bitmap bmp, String name) {
 
-        File fs = new File(Environment.getExternalStorageDirectory() + "/" + constants.PhotoDirName + "/" + name);
+        File fs = new File(Environment.getExternalStorageDirectory() + "/" + constants.InstagramMedia + "/" + constants.PhotoDirName + "/" + name);
         try {
             FileOutputStream out = new FileOutputStream(fs);
             bmp.compress(Bitmap.CompressFormat.JPEG, 90, out);
@@ -39,6 +40,23 @@ public class PhotoDownloader {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void CreateThumb(Bitmap bmp, String name) {
+        File fs = new File(Environment.getExternalStorageDirectory() + "/" + constants.InstagramMedia + "/" + constants.PhotoDirNameThumb + "/" + name);
+        try {
+            FileOutputStream out = new FileOutputStream(fs);
+
+            bmp = Bitmap.createScaledBitmap(bmp,64,64,true);
+            bmp.compress(Bitmap.CompressFormat.JPEG,100,out);
+            out.close();
+            out.flush();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public ShortcodeMedia ConnectImage(String shareurl) {

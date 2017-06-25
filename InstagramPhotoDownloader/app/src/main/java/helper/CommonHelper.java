@@ -1,13 +1,11 @@
 package helper;
 
-import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Environment;
 import android.os.StrictMode;
 import android.util.Patterns;
-import android.view.inputmethod.InputMethodManager;
 
 import com.google.gson.Gson;
 
@@ -32,8 +30,17 @@ public class CommonHelper {
         StrictMode.setThreadPolicy(policy);
     }
 
+    public static boolean CreateMainDirectory() {
+        File rootFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + constants.InstagramMedia);
+        boolean success = false;
+        if (!rootFile.exists()) {
+            success = rootFile.mkdir();
+        }
+        return success;
+    }
+
     public static boolean CreateVideoDirectory() {
-        File rootFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + constants.VideoDirName);
+        File rootFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + constants.InstagramMedia + "/" + constants.VideoDirName);
         boolean success = false;
         if (!rootFile.exists()) {
             success = rootFile.mkdir();
@@ -42,12 +49,38 @@ public class CommonHelper {
     }
 
     public static boolean CreatePhotoDirectory() {
-        File rootFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + constants.PhotoDirName);
+        File rootFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + constants.InstagramMedia + "/" + constants.PhotoDirName);
         boolean success = false;
         if (!rootFile.exists()) {
             success = rootFile.mkdir();
         }
         return success;
+    }
+
+    public static boolean CreateThumbPhotoDirectory() {
+        File rootFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + constants.InstagramMedia + "/" + constants.PhotoDirNameThumb);
+        boolean success = false;
+        if (!rootFile.exists()) {
+            success = rootFile.mkdir();
+        }
+        return success;
+    }
+
+    public static boolean CreateThumbVideoDirectory() {
+        File rootFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + constants.InstagramMedia + "/" + constants.VideoDirNameThumb);
+        boolean success = false;
+        if (!rootFile.exists()) {
+            success = rootFile.mkdir();
+        }
+        return success;
+    }
+
+    public static void CallAllDirectory() {
+        CreateMainDirectory();
+        CreatePhotoDirectory();
+        CreateVideoDirectory();
+        CreateThumbPhotoDirectory();
+        CreateThumbVideoDirectory();
     }
 
     public static String CreateFileNameForVideo(String fileName) {
