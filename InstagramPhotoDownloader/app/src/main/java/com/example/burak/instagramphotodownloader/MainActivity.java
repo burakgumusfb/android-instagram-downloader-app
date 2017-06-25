@@ -7,6 +7,7 @@ import android.content.ClipboardManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -183,7 +184,8 @@ public class MainActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             CommonHelper.CallAllDirectory();
-
+            LoadHorizantalViewForPhotos();
+            LoadHorizantalViewForVideos();
         }
     }
 
@@ -329,7 +331,7 @@ public class MainActivity extends AppCompatActivity {
             horizontal_recycler_view_photo.setAdapter(horizontalAdapterPhoto);
             horizontal_recycler_view_photo.setVisibility(View.VISIBLE);
         } else {
-            horizontal_recycler_view_photo.setVisibility(View.GONE);
+            horizontal_recycler_view_photo.setVisibility(View.INVISIBLE);
         }
 
     }
@@ -346,7 +348,7 @@ public class MainActivity extends AppCompatActivity {
             horizontal_recycler_view_video.setAdapter(horizontalAdapterVideo);
             horizontal_recycler_view_video.setVisibility(View.VISIBLE);
         } else {
-            horizontal_recycler_view_video.setVisibility(View.GONE);
+            horizontal_recycler_view_video.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -372,7 +374,6 @@ public class MainActivity extends AppCompatActivity {
         public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View itemView = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.horizontal_item_view, parent, false);
-
             return new MyViewHolder(itemView);
         }
 
@@ -385,11 +386,11 @@ public class MainActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     Pictures info = (Pictures) holder.ivPhoto.getTag();
                     if (info.isVideo()) {
-                        StartVideoActivity(holder.ivPhoto.getTag().toString());
+                        StartVideoActivity(info.getFileName().toString());
                     }
                     else
                     {
-                        StartPhotoActivity(holder.ivPhoto.getTag().toString());
+                        StartPhotoActivity(info.getFileName().toString());
                     }
                 }
             });
