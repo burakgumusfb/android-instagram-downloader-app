@@ -43,13 +43,15 @@ public class DirectoryProgress {
         File directory = new File(path);
         File[] files = directory.listFiles();
         Pictures pictures;
-        for (int i = 0; i < files.length; i++) {
-            pictures = new Pictures();
-            Bitmap bitmap = BitmapFactory.decodeFile(String.valueOf(files[i]));
-            pictures.setVideo(true);
-            pictures.setBitMap(bitmap);
-            pictures.setFileName(files[i].getName());
-            PicturesList.add(pictures);
+        if (files != null) {
+            for (int i = 0; i < files.length; i++) {
+                pictures = new Pictures();
+                Bitmap bitmap = BitmapFactory.decodeFile(String.valueOf(files[i]));
+                pictures.setVideo(true);
+                pictures.setBitMap(bitmap);
+                pictures.setFileName(files[i].getName());
+                PicturesList.add(pictures);
+            }
         }
         return PicturesList;
     }
