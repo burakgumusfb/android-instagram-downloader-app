@@ -10,6 +10,6 @@
     <ImageView
         android:src="@drawable/rsz_delete"
         android:id="@+id/ivDelete"
-        android:layout_width="10dp"
-        android:layout_height="10dp" />
+        android:layout_width="15dp"
+        android:layout_height="15dp" />
 </LinearLayout>
