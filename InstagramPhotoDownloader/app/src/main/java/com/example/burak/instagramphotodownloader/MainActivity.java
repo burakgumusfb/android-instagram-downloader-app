@@ -412,6 +412,7 @@ public class MainActivity extends AppCompatActivity {
                         DirectoryProgress.DeletePhoto(info.getFileName());
                         LoadHorizantalViewForPhotos();
                     }
+                    Toast.makeText(getApplicationContext(), "File is deleted...", Toast.LENGTH_LONG).show();
                 }
             });
         }
