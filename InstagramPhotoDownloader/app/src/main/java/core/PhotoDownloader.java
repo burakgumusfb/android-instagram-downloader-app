@@ -42,7 +42,7 @@ public class PhotoDownloader {
         }
     }
 
-    public static void CreateThumb(Bitmap bmp, String name) {
+    public static void CreateThumbForPhoto(Bitmap bmp, String name) {
         File fs = new File(Environment.getExternalStorageDirectory() + "/" + constants.InstagramMedia + "/" + constants.PhotoDirNameThumb + "/" + name);
         try {
             FileOutputStream out = new FileOutputStream(fs);

@@ -29,4 +29,14 @@ public class Pictures {
     public void setFileName(String fileName) {
         FileName = fileName;
     }
+
+    private boolean IsVideo;
+
+    public boolean isVideo() {
+        return IsVideo;
+    }
+
+    public void setVideo(boolean video) {
+        IsVideo = video;
+    }
 }

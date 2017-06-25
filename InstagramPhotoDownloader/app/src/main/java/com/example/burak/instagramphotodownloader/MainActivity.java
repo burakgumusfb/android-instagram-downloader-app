@@ -61,10 +61,10 @@ public class MainActivity extends AppCompatActivity {
     private Button btnSave;
     private LinearLayout lLbackground;
     private LinearLayout lLbottomAdd;
-    private RecyclerView horizontal_recycler_view;
-    private ArrayList<String> horizontalList;
-    private HorizontalAdapter horizontalAdapter;
-    private ArrayList<Pictures> picturesArrayList;
+    private RecyclerView horizontal_recycler_view_photo;
+    private HorizontalAdapter horizontalAdapterPhoto;
+    private RecyclerView horizontal_recycler_view_video;
+    private HorizontalAdapter horizontalAdapterVideo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
         isStoragePermissionGranted();
 
         LoadHorizantalViewForPhotos();
+        LoadHorizantalViewForVideos();
 
         tvShareUrl = (EditText) findViewById(R.id.twShareUrlUrl);
         btnDownloader = (Button) findViewById(R.id.btnDownload);
@@ -257,6 +258,7 @@ public class MainActivity extends AppCompatActivity {
 
             } else {
                 String fileName = CommonHelper.CreateFileNameForVideo(media.getVideo_url());
+                LoadHorizantalViewForPhotos();
                 StartVideoActivity(fileName);
             }
 
@@ -286,13 +288,16 @@ public class MainActivity extends AppCompatActivity {
         Bitmap image = HttpHelper.getBitmapFromURL(shortcodeMedia.getDisplayUrl());
         String fileName = CommonHelper.CreateFileNameForImage(shortcodeMedia.getDisplayUrl());
         PhotoDownloader.SaveImage(image, fileName);
-        PhotoDownloader.CreateThumb(image, fileName);
+        PhotoDownloader.CreateThumbForPhoto(image, fileName);
         return shortcodeMedia;
     }
 
     private ShortcodeMedia SaveVideo(ShortcodeMedia shortcodeMedia) {
+        Bitmap image = HttpHelper.getBitmapFromURL(shortcodeMedia.getDisplayUrl());
         String fileName = CommonHelper.CreateFileNameForVideo(shortcodeMedia.getVideo_url());
+        String İmageFileName = CommonHelper.CreateFileNameForImage(shortcodeMedia.getDisplayUrl());
         VideoDownloader.Download(shortcodeMedia.getVideo_url(), fileName);
+        VideoDownloader.CreateThumbForVideo(image, İmageFileName);
         return shortcodeMedia;
     }
 
@@ -313,22 +318,36 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void LoadHorizantalViewForPhotos() {
-        DirectoryProgress p = new DirectoryProgress();
-        horizontal_recycler_view = (RecyclerView) findViewById(R.id.horizontal_recycler_view_photo);
-        picturesArrayList = p.GetPictures();
-        if (picturesArrayList.size() > 0) {
-            horizontalAdapter = new HorizontalAdapter(picturesArrayList);
+        DirectoryProgress directoryProgress = new DirectoryProgress();
+        horizontal_recycler_view_photo = (RecyclerView) findViewById(R.id.horizontal_recycler_view_photo);
+        ArrayList<Pictures> list = directoryProgress.GetPictures();
+        if (list.size() > 0) {
+            horizontalAdapterPhoto = new HorizontalAdapter(list);
             LinearLayoutManager horizontalLayoutManagaer
                     = new LinearLayoutManager(MainActivity.this, LinearLayoutManager.HORIZONTAL, false);
-            horizontal_recycler_view.setLayoutManager(horizontalLayoutManagaer);
-            horizontal_recycler_view.setAdapter(horizontalAdapter);
-            horizontal_recycler_view.setVisibility(View.VISIBLE);
-        }
-        else
-        {
-                horizontal_recycler_view.setVisibility(View.GONE);
+            horizontal_recycler_view_photo.setLayoutManager(horizontalLayoutManagaer);
+            horizontal_recycler_view_photo.setAdapter(horizontalAdapterPhoto);
+            horizontal_recycler_view_photo.setVisibility(View.VISIBLE);
+        } else {
+            horizontal_recycler_view_photo.setVisibility(View.GONE);
         }
 
+    }
+
+    private void LoadHorizantalViewForVideos() {
+        DirectoryProgress directoryProgress = new DirectoryProgress();
+        horizontal_recycler_view_video = (RecyclerView) findViewById(R.id.horizontal_recycler_view_video);
+        ArrayList<Pictures> list = directoryProgress.GetVideoPictures();
+        if (list.size() > 0) {
+            horizontalAdapterVideo = new HorizontalAdapter(list);
+            LinearLayoutManager horizontalLayoutManagaer
+                    = new LinearLayoutManager(MainActivity.this, LinearLayoutManager.HORIZONTAL, false);
+            horizontal_recycler_view_video.setLayoutManager(horizontalLayoutManagaer);
+            horizontal_recycler_view_video.setAdapter(horizontalAdapterVideo);
+            horizontal_recycler_view_video.setVisibility(View.VISIBLE);
+        } else {
+            horizontal_recycler_view_video.setVisibility(View.GONE);
+        }
     }
 
     public class HorizontalAdapter extends RecyclerView.Adapter<HorizontalAdapter.MyViewHolder> {
@@ -360,11 +379,18 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(final MyViewHolder holder, final int position) {
             holder.ivPhoto.setImageBitmap(horizontalList.get(position).getBitMap());
-            holder.ivPhoto.setTag(horizontalList.get(position).getFileName());
+            holder.ivPhoto.setTag(horizontalList.get(position));
             holder.ivPhoto.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    StartPhotoActivity(holder.ivPhoto.getTag().toString());
+                    Pictures info = (Pictures) holder.ivPhoto.getTag();
+                    if (info.isVideo()) {
+                        StartVideoActivity(holder.ivPhoto.getTag().toString());
+                    }
+                    else
+                    {
+                        StartPhotoActivity(holder.ivPhoto.getTag().toString());
+                    }
                 }
             });
         }

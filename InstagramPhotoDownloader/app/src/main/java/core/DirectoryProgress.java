@@ -30,6 +30,7 @@ public class DirectoryProgress {
             for (int i = 0; i < files.length; i++) {
                 pictures = new Pictures();
                 Bitmap bitmap = BitmapFactory.decodeFile(String.valueOf(files[i]));
+                pictures.setVideo(false);
                 pictures.setBitMap(bitmap);
                 pictures.setFileName(files[i].getName());
                 PicturesList.add(pictures);
@@ -38,13 +39,14 @@ public class DirectoryProgress {
         return PicturesList;
     }
     public ArrayList<Pictures> GetVideoPictures() {
-        String path = Environment.getExternalStorageDirectory().toString() + "/" + constants.InstagramMedia + "/" + constants.PhotoDirName;
+        String path = Environment.getExternalStorageDirectory().toString() + "/" + constants.InstagramMedia + "/" + constants.VideoDirNameThumb;
         File directory = new File(path);
         File[] files = directory.listFiles();
         Pictures pictures;
         for (int i = 0; i < files.length; i++) {
             pictures = new Pictures();
             Bitmap bitmap = BitmapFactory.decodeFile(String.valueOf(files[i]));
+            pictures.setVideo(true);
             pictures.setBitMap(bitmap);
             pictures.setFileName(files[i].getName());
             PicturesList.add(pictures);

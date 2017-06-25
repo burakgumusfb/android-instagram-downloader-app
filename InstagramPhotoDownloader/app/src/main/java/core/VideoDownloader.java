@@ -1,5 +1,6 @@
 package core;
 
+import android.graphics.Bitmap;
 import android.os.Environment;
 
 import java.io.File;
@@ -89,5 +90,21 @@ public class VideoDownloader {
         // Intent intent = new Intent(Intent.ACTION_VIEW);
         // intent.setDataAndType(Uri.parse(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Download/" + "small1.mp4"), "video/*");
         //startActivity(intent);
+    }
+    public static void CreateThumbForVideo(Bitmap bmp, String name) {
+        File fs = new File(Environment.getExternalStorageDirectory() + "/" + constants.InstagramMedia + "/" + constants.VideoDirNameThumb + "/" + name);
+        try {
+            FileOutputStream out = new FileOutputStream(fs);
+
+            bmp = Bitmap.createScaledBitmap(bmp,64,64,true);
+            bmp.compress(Bitmap.CompressFormat.JPEG,100,out);
+            out.close();
+            out.flush();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }
