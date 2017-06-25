@@ -2,9 +2,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="64dp"
-    android:orientation="vertical">
+    android:orientation="horizontal">
     <ImageView
         android:id="@+id/ivPhoto"
         android:layout_width="64dp"
         android:layout_height="64dp" />
+    <ImageView
+        android:src="@drawable/rsz_delete"
+        android:id="@+id/ivDelete"
+        android:layout_width="10dp"
+        android:layout_height="10dp" />
 </LinearLayout>

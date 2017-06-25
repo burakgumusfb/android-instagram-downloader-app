@@ -27,6 +27,7 @@
                 android:layout_height="70dp"/>
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/horizontal_recycler_view_video"
+                android:layout_marginTop="2dp"
                 android:background="#fff"
                 android:layout_width="match_parent"
                 android:layout_height="70dp"/>

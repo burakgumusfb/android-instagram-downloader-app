@@ -7,7 +7,6 @@ import android.content.ClipboardManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -260,7 +259,7 @@ public class MainActivity extends AppCompatActivity {
 
             } else {
                 String fileName = CommonHelper.CreateFileNameForVideo(media.getVideo_url());
-                LoadHorizantalViewForPhotos();
+                LoadHorizantalViewForVideos();
                 StartVideoActivity(fileName);
             }
 
@@ -297,9 +296,9 @@ public class MainActivity extends AppCompatActivity {
     private ShortcodeMedia SaveVideo(ShortcodeMedia shortcodeMedia) {
         Bitmap image = HttpHelper.getBitmapFromURL(shortcodeMedia.getDisplayUrl());
         String fileName = CommonHelper.CreateFileNameForVideo(shortcodeMedia.getVideo_url());
-        String İmageFileName = CommonHelper.CreateFileNameForImage(shortcodeMedia.getDisplayUrl());
         VideoDownloader.Download(shortcodeMedia.getVideo_url(), fileName);
-        VideoDownloader.CreateThumbForVideo(image, İmageFileName);
+        fileName = fileName.replace(".mp4", ".jpg");
+        VideoDownloader.CreateThumbForVideo(image, fileName);
         return shortcodeMedia;
     }
 
@@ -358,10 +357,12 @@ public class MainActivity extends AppCompatActivity {
 
         public class MyViewHolder extends RecyclerView.ViewHolder {
             public ImageView ivPhoto;
+            public ImageView ivDelete;
 
             public MyViewHolder(View view) {
                 super(view);
                 ivPhoto = (ImageView) view.findViewById(R.id.ivPhoto);
+                ivDelete = (ImageView)view.findViewById(R.id.ivDelete);
             }
         }
 
@@ -381,16 +382,35 @@ public class MainActivity extends AppCompatActivity {
         public void onBindViewHolder(final MyViewHolder holder, final int position) {
             holder.ivPhoto.setImageBitmap(horizontalList.get(position).getBitMap());
             holder.ivPhoto.setTag(horizontalList.get(position));
+            holder.ivDelete.setTag(horizontalList.get(position));
+
             holder.ivPhoto.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Pictures info = (Pictures) holder.ivPhoto.getTag();
                     if (info.isVideo()) {
                         StartVideoActivity(info.getFileName().toString());
+                    } else {
+                        StartPhotoActivity(info.getFileName().toString());
+                    }
+                }
+            });
+            holder.ivDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Pictures info = (Pictures) holder.ivDelete.getTag();
+                    if (info.isVideo())
+                    {
+                        String fileName = info.getFileName().replace(".jpg",".mp4");
+                        DirectoryProgress.DeleteThumbVideo(info.getFileName());
+                        DirectoryProgress.DeleteVideo(fileName);
+                        LoadHorizantalViewForVideos();
                     }
                     else
                     {
-                        StartPhotoActivity(info.getFileName().toString());
+                        DirectoryProgress.DeleteThumbPhoto(info.getFileName());
+                        DirectoryProgress.DeletePhoto(info.getFileName());
+                        LoadHorizantalViewForPhotos();
                     }
                 }
             });
@@ -409,6 +429,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void StartVideoActivity(String fileName) {
+        fileName = fileName.replace(".jpg", ".mp4");
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent = intent.setDataAndType(Uri.parse(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + constants.InstagramMedia + "/" + constants.VideoDirName + "/" + fileName), "video/*");
         startActivity(intent);

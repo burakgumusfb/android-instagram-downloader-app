@@ -38,6 +38,7 @@ public class DirectoryProgress {
         }
         return PicturesList;
     }
+
     public ArrayList<Pictures> GetVideoPictures() {
         String path = Environment.getExternalStorageDirectory().toString() + "/" + constants.InstagramMedia + "/" + constants.VideoDirNameThumb;
         File directory = new File(path);
@@ -54,5 +55,26 @@ public class DirectoryProgress {
             }
         }
         return PicturesList;
+    }
+
+    public static boolean DeletePhoto(String fileName) {
+        File rootFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + constants.InstagramMedia + "/" + constants.PhotoDirName + "/" + fileName);
+        return rootFile.delete();
+
+    }
+
+    public static boolean DeleteThumbPhoto(String fileName) {
+        File rootFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + constants.InstagramMedia + "/" + constants.PhotoDirNameThumb + "/" + fileName);
+        return rootFile.delete();
+    }
+
+    public static boolean DeleteVideo(String fileName) {
+        File rootFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + constants.InstagramMedia + "/" + constants.VideoDirName + "/" + fileName);
+        return rootFile.delete();
+    }
+
+    public static boolean DeleteThumbVideo(String fileName) {
+        File rootFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + constants.InstagramMedia + "/" + constants.VideoDirNameThumb + "/" + fileName);
+        return rootFile.delete();
     }
 }
