@@ -73,18 +73,8 @@ public class MainActivity extends AppCompatActivity {
 
         CommonHelper.ThreadPolicy();
         isStoragePermissionGranted();
-        DirectoryProgress p = new DirectoryProgress();
 
-
-        horizontal_recycler_view = (RecyclerView) findViewById(R.id.horizontal_recycler_view_photo);
-        picturesArrayList = p.GetPictures();
-        if (picturesArrayList.size() > 0)
-            horizontalAdapter = new HorizontalAdapter(picturesArrayList);
-
-        LinearLayoutManager horizontalLayoutManagaer
-                = new LinearLayoutManager(MainActivity.this, LinearLayoutManager.HORIZONTAL, false);
-        horizontal_recycler_view.setLayoutManager(horizontalLayoutManagaer);
-        horizontal_recycler_view.setAdapter(horizontalAdapter);
+        LoadHorizantalViewForPhotos();
 
         tvShareUrl = (EditText) findViewById(R.id.twShareUrlUrl);
         btnDownloader = (Button) findViewById(R.id.btnDownload);
@@ -246,10 +236,11 @@ public class MainActivity extends AppCompatActivity {
             if (media == null)
                 return null;
             if (!media.getIsVideo()) {
-                return SaveImage(media);
-
+                media = SaveImage(media);
+                return media;
             } else {
-                return SaveVideo(media);
+                media = SaveVideo(media);
+                return media;
             }
         }
 
@@ -260,6 +251,7 @@ public class MainActivity extends AppCompatActivity {
 
             if (!media.getIsVideo()) {
                 String fileName = CommonHelper.CreateFileNameForImage(media.getDisplayUrl());
+                LoadHorizantalViewForPhotos();
                 StartPhotoActivity(fileName);
 
 
@@ -320,6 +312,25 @@ public class MainActivity extends AppCompatActivity {
         adView.loadAd(adRequest);
     }
 
+    private void LoadHorizantalViewForPhotos() {
+        DirectoryProgress p = new DirectoryProgress();
+        horizontal_recycler_view = (RecyclerView) findViewById(R.id.horizontal_recycler_view_photo);
+        picturesArrayList = p.GetPictures();
+        if (picturesArrayList.size() > 0) {
+            horizontalAdapter = new HorizontalAdapter(picturesArrayList);
+            LinearLayoutManager horizontalLayoutManagaer
+                    = new LinearLayoutManager(MainActivity.this, LinearLayoutManager.HORIZONTAL, false);
+            horizontal_recycler_view.setLayoutManager(horizontalLayoutManagaer);
+            horizontal_recycler_view.setAdapter(horizontalAdapter);
+            horizontal_recycler_view.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+                horizontal_recycler_view.setVisibility(View.GONE);
+        }
+
+    }
+
     public class HorizontalAdapter extends RecyclerView.Adapter<HorizontalAdapter.MyViewHolder> {
 
         private List<Pictures> horizontalList;
@@ -369,8 +380,8 @@ public class MainActivity extends AppCompatActivity {
         intent = intent.setDataAndType(Uri.parse("file://" + Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + constants.InstagramMedia + "/" + constants.PhotoDirName + "/" + fileName), "image/*");
         startActivity(intent);
     }
-    private void StartVideoActivity(String fileName)
-    {
+
+    private void StartVideoActivity(String fileName) {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent = intent.setDataAndType(Uri.parse(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + constants.InstagramMedia + "/" + constants.VideoDirName + "/" + fileName), "video/*");
         startActivity(intent);

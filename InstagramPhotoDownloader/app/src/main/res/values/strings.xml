@@ -4,5 +4,5 @@
     <string name="btnDownload">PREVIEW</string>
     <string name="twShareUrl">Share Url</string>
     <string name="btnClose">CLOSE</string>
-    <string name="btnSaveImage">SAVE</string>
+    <string name="btnSaveImage">SAVE / OPEN</string>
 </resources>
