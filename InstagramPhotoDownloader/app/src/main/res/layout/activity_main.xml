@@ -9,7 +9,7 @@
     android:gravity="bottom"
     tools:context="com.example.burak.instagramphotodownloader.MainActivity">
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/llBackground"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -32,41 +32,41 @@
                 android:layout_width="match_parent"
                 android:layout_height="70dp"/>
         </LinearLayout>
-
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="250dp"
-            android:gravity="center"
+            android:gravity="center_horizontal|center_vertical"
+            android:layout_centerInParent="true"
             android:orientation="vertical">
 
             <EditText
                 android:id="@+id/twShareUrlUrl"
                 android:layout_width="250dp"
                 android:layout_height="80dp"
-                android:gravity="center"
                 android:hint="@string/twShareUrl"
                 android:textColor="#fff"
                 android:textColorHint="#fff" />
 
             <Button
                 android:id="@+id/btnDownload"
-                android:layout_marginTop="15dp"
                 android:layout_width="250dp"
                 android:layout_height="50dp"
+                android:layout_marginTop="15dp"
                 android:background="@drawable/btnstyle1"
                 android:text="@string/btnDownload"
                 android:textColor="#fff" />
         </LinearLayout>
 
         <LinearLayout
+            android:baselineAligned="true"
             android:id="@+id/bottomAdd"
+            android:layout_alignParentBottom="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
+            android:gravity="bottom"
+            android:orientation="vertical">
         </LinearLayout>
-    </LinearLayout>
+    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/upPanel"
@@ -126,7 +126,6 @@
                     android:layout_height="50dp"
                     android:background="@drawable/btnstyle1"
                     android:text="@string/btnSaveImage" />
-
 
             </LinearLayout>
         </LinearLayout>

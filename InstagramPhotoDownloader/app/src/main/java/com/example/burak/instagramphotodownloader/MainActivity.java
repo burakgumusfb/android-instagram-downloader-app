@@ -57,9 +57,10 @@ public class MainActivity extends AppCompatActivity {
     private Button btnCloseSlideUpPanel;
     private TextView twUserName;
     private AdView adView;
+    private AdView adView2;
     private LinearLayout llAdd;
     private Button btnSave;
-    private LinearLayout lLbackground;
+    private RelativeLayout lLbackground;
     private LinearLayout lLbottomAdd;
     private RecyclerView horizontal_recycler_view_photo;
     private HorizontalAdapter horizontalAdapterPhoto;
@@ -90,9 +91,9 @@ public class MainActivity extends AppCompatActivity {
         twUserName = (TextView) findViewById(R.id.twUserName);
         llAdd = (LinearLayout) findViewById(R.id.llAdd);
         btnSave = (Button) findViewById(R.id.btnSaveMedia);
-        lLbackground = (LinearLayout) findViewById(R.id.llBackground);
+        lLbackground = (RelativeLayout) findViewById(R.id.llBackground);
         lLbottomAdd = (LinearLayout) findViewById(R.id.bottomAdd);
-
+        LoadAd();
         btnDownloader.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -202,7 +203,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             try {
-                LoadAd();
+
                 progressDialog = ProgressDialog.show(MainActivity.this, "Please Wait", "Previewing...");
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -304,18 +305,25 @@ public class MainActivity extends AppCompatActivity {
 
     private void LoadAd() {
         llAdd.removeAllViews();
-        //lLbottomAdd.removeAllViews();
+        lLbottomAdd.removeAllViews();
 
         adView = new AdView(this);
         adView.setAdSize(AdSize.BANNER);
         adView.setAdUnitId(getString(R.string.add_id));
-
         llAdd.addView(adView);
-        //lLbottomAdd.addView(adView);
+
+        adView2 = new AdView(this);
+        adView2.setAdSize(AdSize.BANNER);
+        adView2.setAdUnitId(getString(R.string.add_id));
+        lLbottomAdd.addView(adView2);
+
 
         // AdRequest adRequest = new AdRequest.Builder().addTestDevice(AdRequest.DEVICE_ID_EMULATOR).build();
         AdRequest adRequest = new AdRequest.Builder().build();
+        AdRequest adRequest2 = new AdRequest.Builder().build();
+
         adView.loadAd(adRequest);
+        adView2.loadAd(adRequest2);
     }
 
     private void LoadHorizantalViewForPhotos() {
