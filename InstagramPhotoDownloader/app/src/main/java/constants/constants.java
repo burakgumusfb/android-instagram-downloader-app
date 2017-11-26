@@ -11,5 +11,5 @@ public class constants {
     public static final String PhotoDirNameThumb="InstagramSavedPhotoThumb";
     public static final String VideoDirName = "InstagramSavedVideo";
     public static final String VideoDirNameThumb = "InstagramSavedVideoThumb";
-
+    public static final String AdCountFile = "adcountfile.txt";
 }

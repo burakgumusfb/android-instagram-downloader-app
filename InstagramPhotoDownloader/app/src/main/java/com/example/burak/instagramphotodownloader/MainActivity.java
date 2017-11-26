@@ -12,7 +12,9 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.StrictMode;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -31,8 +33,11 @@ import android.widget.Toast;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
+import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,12 +71,14 @@ public class MainActivity extends AppCompatActivity {
     private HorizontalAdapter horizontalAdapterPhoto;
     private RecyclerView horizontal_recycler_view_video;
     private HorizontalAdapter horizontalAdapterVideo;
+    private InterstitialAd mInterstitialAd;
+    private Integer zero = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        LoadBigAd();
         CommonHelper.ThreadPolicy();
         isStoragePermissionGranted();
 
@@ -93,14 +100,16 @@ public class MainActivity extends AppCompatActivity {
         btnSave = (Button) findViewById(R.id.btnSaveMedia);
         lLbackground = (RelativeLayout) findViewById(R.id.llBackground);
         lLbottomAdd = (LinearLayout) findViewById(R.id.bottomAdd);
+
         LoadAd();
+
         btnDownloader.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 CommonHelper.CallAllDirectory();
                 HideKeyboard();
-
+                ShowBigAdd();
                 if (CommonHelper.checkNetworkStatus(getApplicationContext())) {
                     try {
                         GetMedia getMedia = new GetMedia();
@@ -122,7 +131,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
 
         btnCloseSlideUpPanel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -155,6 +163,26 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void ShowBigAdd() {
+        try {
+            boolean hasFile = CommonHelper.ExistLocalFile(getApplicationContext(), constants.AdCountFile);
+            if (!hasFile) {
+                CommonHelper.CreateLocalFile(getApplicationContext(), constants.AdCountFile);
+                CommonHelper.WriteToFile(getApplicationContext(), constants.AdCountFile, String.valueOf(zero));
+            }
+            Integer fileValue = Integer.parseInt(CommonHelper.ReadFromFile(getApplicationContext(), constants.AdCountFile));
+            if (fileValue % 2 == 0) {
+                if (mInterstitialAd.isLoaded()) {
+                    mInterstitialAd.show();
+
+                }
+            }
+            CommonHelper.WriteToFile(getApplicationContext(), constants.AdCountFile, String.valueOf(fileValue + 1));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void HideKeyboard() {
@@ -309,6 +337,7 @@ public class MainActivity extends AppCompatActivity {
 
         adView = new AdView(this);
         adView.setAdSize(AdSize.BANNER);
+
         adView.setAdUnitId(getString(R.string.add_id));
         llAdd.addView(adView);
 
@@ -324,6 +353,13 @@ public class MainActivity extends AppCompatActivity {
 
         adView.loadAd(adRequest);
         adView2.loadAd(adRequest2);
+    }
+
+    private void LoadBigAd() {
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId("ca-app-pub-6187296949502756/2849838558");
+        mInterstitialAd.loadAd(new AdRequest.Builder().build());
+
     }
 
     private void LoadHorizantalViewForPhotos() {
@@ -370,7 +406,7 @@ public class MainActivity extends AppCompatActivity {
             public MyViewHolder(View view) {
                 super(view);
                 ivPhoto = (ImageView) view.findViewById(R.id.ivPhoto);
-                ivDelete = (ImageView)view.findViewById(R.id.ivDelete);
+                ivDelete = (ImageView) view.findViewById(R.id.ivDelete);
             }
         }
 
@@ -407,15 +443,12 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     Pictures info = (Pictures) holder.ivDelete.getTag();
-                    if (info.isVideo())
-                    {
-                        String fileName = info.getFileName().replace(".jpg",".mp4");
+                    if (info.isVideo()) {
+                        String fileName = info.getFileName().replace(".jpg", ".mp4");
                         DirectoryProgress.DeleteThumbVideo(info.getFileName());
                         DirectoryProgress.DeleteVideo(fileName);
                         LoadHorizantalViewForVideos();
-                    }
-                    else
-                    {
+                    } else {
                         DirectoryProgress.DeleteThumbPhoto(info.getFileName());
                         DirectoryProgress.DeletePhoto(info.getFileName());
                         LoadHorizantalViewForPhotos();
@@ -432,15 +465,28 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void StartPhotoActivity(String fileName) {
+        BugFixForApi23Than();
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent = intent.setDataAndType(Uri.parse("file://" + Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + constants.InstagramMedia + "/" + constants.PhotoDirName + "/" + fileName), "image/*");
         startActivity(intent);
     }
 
     private void StartVideoActivity(String fileName) {
+        BugFixForApi23Than();
         fileName = fileName.replace(".jpg", ".mp4");
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent = intent.setDataAndType(Uri.parse(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + constants.InstagramMedia + "/" + constants.VideoDirName + "/" + fileName), "video/*");
         startActivity(intent);
+    }
+
+    private void BugFixForApi23Than() {
+        if (Build.VERSION.SDK_INT >= 24) {
+            try {
+                Method m = StrictMode.class.getMethod("disableDeathOnFileUriExposure");
+                m.invoke(null);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
