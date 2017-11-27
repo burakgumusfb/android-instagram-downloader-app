@@ -4,5 +4,5 @@
     <string name="btnDownload">PREVIEW</string>
     <string name="twShareUrl">Link Of Instagram Post</string>
     <string name="btnClose">CLOSE</string>
-    <string name="btnSaveImage">SAVE / OPEN</string>
+    <string name="btnSaveImage">SAVE AND OPEN</string>
 </resources>

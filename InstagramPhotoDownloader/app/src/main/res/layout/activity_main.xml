@@ -40,6 +40,7 @@
             android:orientation="vertical">
 
             <EditText
+                android:gravity="center"
                 android:id="@+id/twShareUrlUrl"
                 android:layout_width="250dp"
                 android:layout_height="80dp"
@@ -116,12 +117,14 @@
                 android:orientation="horizontal">
                 <Button
                     android:id="@+id/btnCloseSlideUp"
+                    android:textColor="#fff"
                     android:layout_width="wrap_content"
                     android:layout_height="50dp"
                     android:background="@drawable/btnstyle1"
                     android:text="@string/btnClose" />
                 <Button
                     android:id="@+id/btnSaveMedia"
+                    android:textColor="#fff"
                     android:layout_width="wrap_content"
                     android:layout_height="50dp"
                     android:background="@drawable/btnstyle1"
