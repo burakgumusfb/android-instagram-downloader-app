@@ -173,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
                 CommonHelper.WriteToFile(getApplicationContext(), constants.AdCountFile, String.valueOf(zero));
             }
             Integer fileValue = Integer.parseInt(CommonHelper.ReadFromFile(getApplicationContext(), constants.AdCountFile));
-            if (fileValue % 2 == 0) {
+            if (fileValue % 3 == 0) {
                 if (mInterstitialAd.isLoaded()) {
                     mInterstitialAd.show();
 
@@ -433,7 +433,8 @@ public class MainActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     Pictures info = (Pictures) holder.ivPhoto.getTag();
                     if (info.isVideo()) {
-                        StartVideoActivity(info.getFileName().toString());
+                        String fileName =info.getFileName().replace(".jpg",".mp4");
+                        StartVideoActivity(fileName);
                     } else {
                         StartPhotoActivity(info.getFileName().toString());
                     }
@@ -473,7 +474,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void StartVideoActivity(String fileName) {
         BugFixForApi23Than();
-        fileName = fileName.replace(".jpg", ".mp4");
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent = intent.setDataAndType(Uri.parse(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + constants.InstagramMedia + "/" + constants.VideoDirName + "/" + fileName), "video/*");
         startActivity(intent);

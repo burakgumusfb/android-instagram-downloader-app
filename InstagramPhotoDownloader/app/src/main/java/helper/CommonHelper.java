@@ -18,7 +18,7 @@ import java.io.OutputStreamWriter;
 
 import constants.constants;
 import core.SharedResponseTemplate;
-
+import java.util.UUID;
 /**
  * Created by BURAK on 11/06/2017.
  */
@@ -89,21 +89,13 @@ public class CommonHelper {
     }
 
     public static String CreateFileNameForVideo(String fileName) {
-        if (fileName == null || fileName == "")
-            return null;
-
-        String[] splitFileName = fileName.split("/");
-        fileName = splitFileName[3] + splitFileName[4];
-        return fileName;
+        String [] Splitted = fileName.split("/");
+        return Splitted[Splitted.length -1];
     }
 
     public static String CreateFileNameForImage(String fileName) {
-        if (fileName == null || fileName == "")
-            return null;
-
-        String[] splitFileName = fileName.split("/");
-        fileName = splitFileName[3] + splitFileName[4] + splitFileName[5];
-        return fileName;
+        String [] Splitted = fileName.split("/");
+        return Splitted[Splitted.length -1];
     }
 
 
